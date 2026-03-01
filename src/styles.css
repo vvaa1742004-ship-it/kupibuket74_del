@@ -1,0 +1,50 @@
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top left, rgba(217, 93, 57, 0.18), transparent 35%),
+    radial-gradient(circle at top right, rgba(24, 49, 83, 0.16), transparent 40%),
+    #f5f1e8;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-bg {
+  min-height: 100vh;
+}
+
+.hero {
+  padding: 20px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #fffdf8, #efe6d7);
+  border: 1px solid rgba(24, 49, 83, 0.08);
+  box-shadow: 0 14px 38px rgba(24, 49, 83, 0.08);
+}
+
+.panel-card {
+  border-radius: 22px;
+  background: rgba(255, 253, 248, 0.92);
+  border: 1px solid rgba(24, 49, 83, 0.08);
+  box-shadow: 0 12px 32px rgba(24, 49, 83, 0.08);
+}
+
+.empty-state {
+  padding: 24px;
+  text-align: center;
+  color: #5e6a72;
+}
+
+.map-fallback {
+  padding: 24px;
+  text-align: center;
+  background: rgba(255, 253, 248, 0.92);
+  border-radius: 22px;
+  color: #5e6a72;
+}
+
