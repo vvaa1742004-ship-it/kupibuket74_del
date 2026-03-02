@@ -11,7 +11,7 @@ This folder is a standalone frontend project for Telegram Mini App deployment on
 
 ```bash
 VITE_API_BASE_URL=https://your-api-domain.example/api/v1
-VITE_DEMO_MODE=true
+VITE_DEMO_MODE=false
 ```
 
 5. Build settings:
@@ -26,4 +26,5 @@ VITE_DEMO_MODE=true
 - The backend API must be deployed separately.
 - Telegram Mini App auth still requires opening the app from the bot via `WebAppInfo`.
 - For local browser-only checks, you can inject test `initData` through `window.__DEV_INIT_DATA__`.
-- For Vercel-only test mode, keep `VITE_DEMO_MODE=true` and the frontend will use embedded mock data instead of calling `/api`.
+- Real backend mode is default. The frontend uses `VITE_API_BASE_URL` and sends requests to your deployed API.
+- Demo mode is disabled by default and turns on only when `VITE_DEMO_MODE=true`.

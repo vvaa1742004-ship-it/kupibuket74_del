@@ -13,11 +13,21 @@ import {
   updateOrderStatusMock
 } from "./mockApi";
 
-const demoMode = import.meta.env.VITE_DEMO_MODE !== "false";
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+const demoMode = import.meta.env.VITE_DEMO_MODE === "true";
+
+console.info(`API BASE URL: ${apiBaseUrl || "(not set)"}`);
+console.info(`DEMO MODE: ${demoMode}`);
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/api/v1"
+  baseURL: apiBaseUrl || undefined
 });
+
+function ensureApiConfigured(): void {
+  if (!apiBaseUrl) {
+    throw new Error("VITE_API_BASE_URL is not configured");
+  }
+}
 
 export function setToken(token: string | null): void {
   if (token) {
@@ -31,12 +41,18 @@ export async function authenticate(initData: string): Promise<AuthResponse> {
   if (demoMode) {
     return authenticateMock(initData);
   }
-  const { data } = await client.post<AuthResponse>("/auth/telegram", { init_data: initData });
+  ensureApiConfigured();
+  const { data } = await client.post<AuthResponse>("auth/telegram", { init_data: initData });
   return data;
 }
 
 export async function fetchMe(): Promise<{ actor: AuthResponse["actor"] }> {
-  const { data } = await client.get("/auth/me");
+  if (demoMode) {
+    const auth = await authenticateMock("");
+    return { actor: auth.actor };
+  }
+  ensureApiConfigured();
+  const { data } = await client.get("auth/me");
   return data;
 }
 
@@ -44,7 +60,8 @@ export async function fetchOrders(params?: Record<string, string | number | stri
   if (demoMode) {
     return fetchOrdersMock(params);
   }
-  const { data } = await client.get<Order[]>("/orders", { params });
+  ensureApiConfigured();
+  const { data } = await client.get<Order[]>("orders", { params });
   return data;
 }
 
@@ -52,7 +69,8 @@ export async function fetchOrder(orderId: string): Promise<Order> {
   if (demoMode) {
     return fetchOrderMock(orderId);
   }
-  const { data } = await client.get<Order>(`/orders/${orderId}`);
+  ensureApiConfigured();
+  const { data } = await client.get<Order>(`orders/${orderId}`);
   return data;
 }
 
@@ -60,7 +78,8 @@ export async function updateOrderStatus(orderId: number, payload: Record<string,
   if (demoMode) {
     return updateOrderStatusMock(orderId, payload);
   }
-  const { data } = await client.post<Order>(`/orders/${orderId}/status`, payload);
+  ensureApiConfigured();
+  const { data } = await client.post<Order>(`orders/${orderId}/status`, payload);
   return data;
 }
 
@@ -68,7 +87,10 @@ export async function assignOrder(orderId: number, courierId: number): Promise<O
   if (demoMode) {
     return assignOrderMock(orderId, courierId);
   }
-  const { data } = await client.post<Order>(`/orders/${orderId}/assign`, { courier_id: courierId });
+  ensureApiConfigured();
+  const { data } = await client.post<Order>(`orders/${orderId}/assign`, {
+    courier_id: courierId
+  });
   return data;
 }
 
@@ -76,7 +98,8 @@ export async function patchOrder(orderId: number, payload: Record<string, unknow
   if (demoMode) {
     return patchOrderMock(orderId, payload);
   }
-  const { data } = await client.patch<Order>(`/orders/${orderId}`, payload);
+  ensureApiConfigured();
+  const { data } = await client.patch<Order>(`orders/${orderId}`, payload);
   return data;
 }
 
@@ -84,7 +107,8 @@ export async function fetchCouriers(): Promise<Courier[]> {
   if (demoMode) {
     return fetchCouriersMock();
   }
-  const { data } = await client.get<Courier[]>("/couriers");
+  ensureApiConfigured();
+  const { data } = await client.get<Courier[]>("couriers");
   return data;
 }
 
@@ -92,7 +116,8 @@ export async function fetchCurrentBatch(): Promise<BatchResponse> {
   if (demoMode) {
     return fetchCurrentBatchMock();
   }
-  const { data } = await client.get<BatchResponse>("/batches/current");
+  ensureApiConfigured();
+  const { data } = await client.get<BatchResponse>("batches/current");
   return data;
 }
 
@@ -100,7 +125,8 @@ export async function postCourierLocation(lat: number, lon: number): Promise<voi
   if (demoMode) {
     return postCourierLocationMock();
   }
-  await client.post("/couriers/location", { lat, lon });
+  ensureApiConfigured();
+  await client.post("couriers/location", { lat, lon });
 }
 
 export async function fetchAnalytics(): Promise<{
@@ -111,6 +137,7 @@ export async function fetchAnalytics(): Promise<{
   if (demoMode) {
     return fetchAnalyticsMock();
   }
-  const { data } = await client.get("/analytics/summary");
+  ensureApiConfigured();
+  const { data } = await client.get("analytics/summary");
   return data;
 }
