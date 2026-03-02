@@ -6,6 +6,8 @@ import "leaflet/dist/leaflet.css";
 import App from "./App";
 import "./styles.css";
 
+console.log("API_BASE_URL:", import.meta.env.VITE_API_BASE_URL, "DEMO:", import.meta.env.VITE_DEMO_MODE);
+
 const theme = createTheme({
   palette: {
     primary: { main: "#183153" },
@@ -30,4 +32,3 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-

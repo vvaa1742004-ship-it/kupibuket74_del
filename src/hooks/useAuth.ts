@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { authenticate, setToken } from "../lib/api";
+import { authenticate, getApiBaseUrl, isDemoMode, setToken } from "../lib/api";
 import { bootTelegramWebApp, getTelegramInitData } from "../lib/telegram";
 import type { Actor } from "../types";
 
@@ -17,6 +17,11 @@ export function useAuth() {
 
     const init = async () => {
       try {
+        if (!isDemoMode() && !getApiBaseUrl()) {
+          throw new Error(
+            "Backend API is not configured. Set VITE_API_BASE_URL in Vercel and redeploy the frontend."
+          );
+        }
         const initData = getTelegramInitData();
         if (!initData) {
           throw new Error("Mini App must be opened from Telegram");
@@ -38,4 +43,3 @@ export function useAuth() {
 
   return { actor, loading, error };
 }
-

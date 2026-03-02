@@ -16,8 +16,8 @@ import {
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
 const demoMode = import.meta.env.VITE_DEMO_MODE === "true";
 
-console.info(`API BASE URL: ${apiBaseUrl || "(not set)"}`);
-console.info(`DEMO MODE: ${demoMode}`);
+console.log("API_BASE_URL:", import.meta.env.VITE_API_BASE_URL, "DEMO:", import.meta.env.VITE_DEMO_MODE);
+console.log("API client baseURL:", apiBaseUrl || "(not set)");
 
 const client = axios.create({
   baseURL: apiBaseUrl || undefined
@@ -25,8 +25,16 @@ const client = axios.create({
 
 function ensureApiConfigured(): void {
   if (!apiBaseUrl) {
-    throw new Error("VITE_API_BASE_URL is not configured");
+    throw new Error("VITE_API_BASE_URL is not configured. Set the backend API URL in Vercel environment variables.");
   }
+}
+
+export function getApiBaseUrl(): string {
+  return apiBaseUrl;
+}
+
+export function isDemoMode(): boolean {
+  return demoMode;
 }
 
 export function setToken(token: string | null): void {
